@@ -11,7 +11,7 @@ function App() {
   // }, [error, navigate]);
 
   return (
-    <>
+    <div>
       <Routes>
         {
           routes.map((route) => (
@@ -19,7 +19,7 @@ function App() {
           ))
         }
       </Routes>
-    </>
+    </div>
   )
 }
 
