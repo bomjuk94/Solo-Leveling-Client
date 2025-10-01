@@ -1,32 +1,32 @@
 @import "tailwindcss";
 
 :root {
-  /* Update: Update colour values */
   /* Light Theme - Day Mode */
   font-feature-settings: 'liga' 1, 'calt' 1; /* fix for Chrome */
-  --bg-primary:       #F6F1EA;
-  --bg-secondary:     #E3DACF;
-  --bg-dialog:        #fdf6e3;
-  --text-primary:     #3E3A33;
-  --text-muted:       #7A6F63;
-  --accent-green:     #6FA86E;
-  --accent-yellow:    #FFD95A;
-  --border:           #D4C9BA;
-  --border-dialog:    #5a3d2b;
-  --soil:             #A37955;
+  
+  --bg-primary:       #F5F5F7;   /* soft misty gray */
+  --bg-secondary:     #E6E7EB;   /* steel-like neutral */
+  --bg-dialog:        #FFFFFF;   /* clean surface for cards/dialogs */
+  
+  --text-primary:     #2A2B2E;   /* near-black */
+  --text-muted:       #6C6F75;   /* softer gray for secondary text */
+  
+  --accent-blue:      #3A82F7;   /* XP progression glow */
+  --accent-purple:    #7A3FF2;   /* gem / prestige currency */
+  --accent-gold:      #FFB547;   /* rewards, loot, legendary */
+  --accent-green:     #2ECC71;   /* buffs, health, success */
+  --accent-red:       #E63946;   /* errors, danger */
 
-  /* Shared Accent Colors (used in both themes) */
-  --accent-purple:    #C97DCF;
-  --currency-gold:    #FFC857;
-  --accent-mint:      #B6F2D5;
+  --border:           #C9CCD2;   /* light neutral borders */
+  --border-dialog:    #A6A9B0;   /* slightly stronger for modals */
 }
+
 html {
   scroll-behavior: smooth;
 }
 
 body {
   font-family: 'Inter', sans-serif;
-  background-color: slategrey;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -39,31 +39,39 @@ p {
 }
 
 /* Dark Theme - Night Mode */
-  /* Update: Update colour values */
 [data-theme="dark"] {
-  --bg-primary:       #1C1B18;
-  --bg-secondary:     #292824;
-  --text-primary:     #E8E3DC;
-  --text-muted:       #A09A91;
-  --accent-green:     #6FA86E;  /* Same as light for consistency */
-  --accent-yellow:    #F5C244;
-  --border:           #3B3A36;
-  --soil:             #735A3C;
+  --bg-primary:       #0E0E10;   /* deep void black */
+  --bg-secondary:     #1C1E22;   /* iron gray */
+  --bg-dialog:        #23252B;   /* elevated panels */
+  
+  --text-primary:     #E8E3DC;   /* soft off-white */
+  --text-muted:       #A09A91;   /* faded gray-beige */
+
+  --accent-blue:      #4C8DFF;   /* glowing XP */
+  --accent-purple:    #9D5CFF;   /* prestige gems */
+  --accent-gold:      #FFC857;   /* loot highlight */
+  --accent-green:     #41D183;   /* buffs/healing */
+  --accent-red:       #F06C75;   /* alerts, danger */
+  
+  --border:           #3B3A36;   /* subtle separators */
+  --border-dialog:    #545454;   /* stronger UI edges */
 }
 
 @theme {
-  /* Update: Update values */
-  /* --container-desktop-width: 1000px; */
+  /* Layout values */
   --spacing-desktop-width: 1000px;
   --spacing-desktop-height: 600px;
   --spacing-desk-width: 390px;
+
   --spacing-one-hundred: 100px;
   --spacing-one-thirty: 130px;
   --spacing-two-hundred-ten: 210px;
   --spacing-three-fifty-four: 354px;
   --spacing-five-hundred: 500px;
+
   --spacing-thirty: 30px;
   --spacing-thirty-five: 35px;
+
   --spacing-thirty-percent: 30%;
   --spacing-fourty-percent: 40%;
   --spacing-fifty-percent: 50%;
@@ -73,6 +81,7 @@ p {
   --spacing-hundred-fifteen-percent: 115%;
   --spacing-hundred-thirty-percent: 130%;
   --spacing-two-fifty-five-percent: 255%;
+
   --radius-twenty: 20px;
   --text-ten: 10px;
   --text-thirteen: 13px;

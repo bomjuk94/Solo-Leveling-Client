@@ -1,9 +1,7 @@
-// routes.ts
-// import SplashPage from '@features/Splash/pages/Splash'
 import Register from "@pages/Register"
 import Login from "@pages/Login"
 import Dashboard from "@pages/Dashboard"
-import GoalSetter from "@pages/GoalSetter"
+import SetGoals from "@/pages/SetGoals"
 import History from "@pages/History"
 import Profile from "@pages/Profile"
 import Store from "@pages/Store"
@@ -22,8 +20,8 @@ export const routes = [
         element: <Login />,
     },
     {
-        path: '/goal-setter',
-        element: <GoalSetter />,
+        path: '/set-goals',
+        element: <SetGoals />,
     },
     {
         path: '/profile',
