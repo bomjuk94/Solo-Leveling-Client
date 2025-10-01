@@ -1,28 +1,19 @@
-import { useRef } from "react";
+import { useHandleFormSubmit } from "@/hooks/useHandleFormSubmit";
 
 const LoginForm = () => {
 
-  const loginFormRef = useRef<HTMLFormElement | null>(null)
-  const usernameRef = useRef<HTMLInputElement | null>(null);
-  const passwordRef = useRef<HTMLInputElement | null>(null);
-
-  const loginSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Username:", usernameRef.current?.value);
-    console.log("Password:", passwordRef.current?.value);
-    // Validate user inputs client side
-    // Request to api to authenticate
-    // Return any errors
-    // Clear inputs
-    loginFormRef.current?.reset()
-    // Navigate user to dashboard page if successful login
-  };
+  const {
+    handleFormSubmit,
+    usernameRef,
+    userPasswordRef,
+    formRef,
+  } = useHandleFormSubmit()
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--bg-primary)] px-4">
       <form
-        ref={loginFormRef}
-        onSubmit={loginSubmit}
+        ref={formRef}
+        onSubmit={handleFormSubmit}
         className="w-full max-w-sm bg-[var(--bg-dialog)] rounded-[var(--radius-twenty)] shadow-lg p-8 border border-[var(--border)]"
       >
         <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 text-center font-serif">
@@ -57,7 +48,7 @@ const LoginForm = () => {
           <input
             id="password"
             type="password"
-            ref={passwordRef}
+            ref={userPasswordRef}
             placeholder="Enter password"
             className="w-full px-3 py-2 rounded-md border border-[var(--border)] bg-[var(--bg-secondary)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-purple)]"
           />
@@ -66,6 +57,8 @@ const LoginForm = () => {
         {/* Submit */}
         <button
           type="submit"
+          name="mode"
+          value="login"
           className="w-full py-2 rounded-md bg-[var(--accent-blue)] text-white font-semibold hover:bg-[var(--accent-purple)] transition-colors cursor-pointer"
         >
           Login
