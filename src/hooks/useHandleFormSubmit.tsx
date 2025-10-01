@@ -3,6 +3,7 @@ import { useRef, useState } from "react"
 import { validateFormInputs } from "@/utils/validateFormInputs"
 import type { FormModeTypes } from "@/types"
 import { useSubmitFormData } from "./useSubmitFormData"
+import { showToast } from "@/utils/showToast"
 
 export const useHandleFormSubmit = () => {
     const navigate = useNavigate()
@@ -72,6 +73,9 @@ export const useHandleFormSubmit = () => {
                     navigate("/")
                 }
             }
+        } else {
+            formRef.current?.reset()
+            showToast('error', newErrors)
         }
     }
 

@@ -1,6 +1,6 @@
-// import { useEffect } from 'react'
 import { Routes, Route, useNavigate } from 'react-router-dom'
 import { routes } from './navigation/routes'
+import { ToastContainer } from 'react-toastify'
 
 function App() {
 
@@ -11,7 +11,8 @@ function App() {
   // }, [error, navigate]);
 
   return (
-    <div>
+    <>
+        <div>
       <Routes>
         {
           routes.map((route) => (
@@ -20,6 +21,16 @@ function App() {
         }
       </Routes>
     </div>
+
+          <ToastContainer
+        position={"top-right"}
+        autoClose={3000}
+        hideProgressBar={false}
+        closeOnClick={true}
+        pauseOnHover={true}
+        draggable={true}
+      />
+    </>
   )
 }
 
