@@ -9,7 +9,7 @@ export type UserPurchasesStore = {
   resetUserPurchases: () => void;
 };
 
-export const useUserProfileStore = create<UserPurchasesStore>()(
+export const useUserPurchasesStore = create<UserPurchasesStore>()(
   persist(
     (set, get) => ({
       purchases: [],

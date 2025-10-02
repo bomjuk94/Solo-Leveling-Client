@@ -1,9 +1,13 @@
 import { useNavigate } from "react-router-dom"
 import { useRef, useState } from "react"
 import { validateFormInputs } from "@/utils/validateFormInputs"
-import type { FormModeTypes } from "@/types"
+import type { FormModeTypes, userProfile } from "@/types"
 import { useSubmitFormData } from "./useSubmitFormData"
 import { showToast } from "@/utils/showToast"
+import { useUserProfileStore } from "@/stores/useUserProfileStore"
+import { useUserPurchasesStore } from "@/stores/usePurchasesStore"
+import { useUserStore } from "@/stores/useUserStore"
+import { apiFetch } from "@/utils/apiFetch"
 
 export const useHandleFormSubmit = () => {
     const navigate = useNavigate()
@@ -13,6 +17,9 @@ export const useHandleFormSubmit = () => {
     const [errors, setErrors] = useState<string[]>([])
     const updatePayload: Record<string, string> = {}
     const { handleUserFormSubmit } = useSubmitFormData()
+    const { setUserProfile } = useUserProfileStore()
+    const { setUserPurchases } = useUserPurchasesStore()
+    const { setUserStore } = useUserStore()
 
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -21,7 +28,7 @@ export const useHandleFormSubmit = () => {
         if (!form) return
 
         const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null
-        const mode = (submitter?.value as FormModeTypes) || "login"
+        const mode = (submitter?.value as FormModeTypes)
 
         const newErrors: string[] = []
         const newUsername = usernameRef.current?.value.trim()
@@ -44,28 +51,43 @@ export const useHandleFormSubmit = () => {
 
             const response = await handleUserFormSubmit(data)
             form.reset()
+            if (!response) return
 
-            if (response === 200) {
+            if (response.res.status === 200) {
 
                 try {
                     const token = localStorage.getItem("token")
                     if (!token) throw new Error("No token found")
 
-                    // const fetches = [
-                    //     // profile
-                    //     { key: "profile", store: useRegisteredUserGameStore.getState().setRegisteredProfile, promise: apiFetch('/api/profile').then(r => r.json()), transform: (data) => stripMongoId(data), },
-                    // ];
+                    // Check mode value
+                    if (mode === 'login') {
+                        // fetch user's data in remote db, and hydrate local store
 
-                    // const results = await Promise.allSettled(fetches.map(f => f.promise));
+                        const fetches = [
+                            // profile
+                            { key: "profile", store: useUserProfileStore.getState().setUserProfile, promise: apiFetch('/api/profile').then(r => r.json()) },
+                            { key: "purchases", store: useUserPurchasesStore.getState().setUserPurchases, promise: apiFetch('/api/purchases').then(r => r.json()) },
+                            { key: "store", store: useUserStore.getState().setUserStore, promise: apiFetch('/api/store').then(r => r.json()) },
+                        ];
 
-                    // results.forEach((result, index) => {
-                    //     const { key, store, transform } = fetches[index];
-                    //     if (result.status === "fulfilled") {
-                    //         store(transform(result.value));
-                    //     } else {
-                    //         console.error(`❌ ${key} fetch failed`, result.reason);
-                    //     }
-                    // });
+                        const results = await Promise.allSettled(fetches.map(f => f.promise));
+
+                        results.forEach((result, index) => {
+                            const { key, store } = fetches[index];
+                            if (result.status === "fulfilled") {
+                                store(result.value);
+                            } else {
+                                console.error(`❌ ${key} fetch failed`, result.reason);
+                            }
+                        });
+                    } else {
+                        const newProfile: userProfile = response.returnedData.profile
+                        setUserProfile(newProfile)
+                        setUserPurchases([])
+                        setUserStore([])
+                    }
+
+
 
                     navigate("/")
                 } catch (error) {

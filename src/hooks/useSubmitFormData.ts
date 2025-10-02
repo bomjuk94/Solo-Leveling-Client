@@ -17,13 +17,24 @@ export const useSubmitFormData = () => {
                 }),
             });
 
+            if (!res.ok) {
+                // handle error (e.g. show toast)
+                const errorData = await res.json();
+                showToast("error", errorData.error || "Something went wrong");
+                return;
+            }
+
             const returnedData = await res.json();
 
             if (returnedData.token) {
                 login(returnedData.token);
             }
+            const response = {
+                res,
+                returnedData,
+            }
 
-            return res.status;
+            return response;
         } catch (error: any) {
             console.error("API error:", error);
             console.log('error', error)
