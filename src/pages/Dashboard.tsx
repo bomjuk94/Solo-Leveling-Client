@@ -1,9 +1,15 @@
-import React from 'react'
+import { useEffect } from "react";
+import { getTimeZones } from "@vvo/tzdb";
+import { formatTimeZoneLabel } from "@/utils/formatTimeZoneLabel";
 
 const Dashboard = () => {
-    return (
-        <div>Dashboard</div>
-    )
-}
+  useEffect(() => {
+    const zones = getTimeZones();
 
-export default Dashboard
+    zones.map((zone) => console.log(formatTimeZoneLabel(zone)));
+  }, []);
+
+  return <div>Dashboard</div>;
+};
+
+export default Dashboard;
