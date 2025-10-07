@@ -91,14 +91,27 @@ export const useHandleFormSubmit = () => {
                 console.error(`❌ ${key} fetch failed`, result.reason);
               }
             });
+
+            const userOnboarded: userProfile =
+              response.returnedData.profile.onBoarded;
+            if (userOnboarded) {
+              navigate("/");
+            } else {
+              navigate("/character-creation");
+            }
           } else {
             const newProfile: userProfile = response.returnedData.profile;
             setUserProfile(newProfile);
             setUserPurchases([]);
             setUserStore([]);
-          }
 
-          navigate("/");
+            // Check if user is onboarded.
+            if (newProfile.onBoarded) {
+              navigate("/");
+            } else {
+              navigate("/character-creation");
+            }
+          }
         } catch (error) {
           console.error("Error hydrating inventory after login:", error);
           navigate("/");
