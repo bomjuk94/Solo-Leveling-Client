@@ -5,3 +5,4 @@ export * from "./purchase";
 export * from "./tag";
 export * from "./store";
 export * from "./timeZone";
+export * from './profile';
