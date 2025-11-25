@@ -1,9 +1,11 @@
-import React, { useState, useMemo, } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getTimeZones } from "@vvo/tzdb";
 import type { TimeZone } from "@/types";
 import { formatTimeZoneLabel } from "@/utils/formatTimeZoneLabel";
 import { showToast } from "@/utils/showToast"; // adjust import path
+import placeholder from '../assets/images/placeholder.png'
+import { apiFetch } from "@/utils/apiFetch";
 
 const CharacterCreation = () => {
 
@@ -24,6 +26,13 @@ const CharacterCreation = () => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const setClass = (id: string) => {
+    setSelectedClass(id)
+    setPreviewImage(placeholder)
+    console.log('clearing image');
+    setUploadedImage(null)
+  }
 
   // Filter + format timezones
   const filteredTimezones = useMemo(() => {
@@ -58,7 +67,7 @@ const CharacterCreation = () => {
       stats: { strength: 9, agility: 5, intellect: 3 },
       perks: ["+10% melee damage", "+5% resistance", "Can enter Berserk mode"],
       description: "A fierce warrior who thrives in close combat and brute strength.",
-      defaultImage: "/images/barbarian.png",
+      defaultImage: "/assets/images/barbarian.png",
     },
     {
       id: "monk",
@@ -66,7 +75,7 @@ const CharacterCreation = () => {
       stats: { strength: 6, agility: 8, intellect: 5 },
       perks: ["+10% dodge chance", "+5% healing received", "Inner Peace buff"],
       description: "A disciplined fighter who channels spiritual energy for balance.",
-      defaultImage: "/images/monk.png",
+      defaultImage: "/assets/images/monk.png",
     },
     {
       id: "wizard",
@@ -74,7 +83,7 @@ const CharacterCreation = () => {
       stats: { strength: 3, agility: 4, intellect: 10 },
       perks: ["+15% spell power", "+10% mana regen", "Can cast Arcane Shield"],
       description: "A master of arcane arts, wielding elemental power with intellect.",
-      defaultImage: "/images/wizard.png",
+      defaultImage: "/assets/images/wizard.png",
     },
   ];
 
@@ -100,24 +109,44 @@ const CharacterCreation = () => {
       timezone,
       selectedClass,
       customDescription,
-      aiPrompt,
       uploadedImageName: uploadedImage?.name || null,
     };
 
     console.log("Submitting character:", payload);
-    await new Promise((r) => setTimeout(r, 1500));
-    const response = true
 
-    setIsSubmitting(false);
-    // Check for 200 response from api
-    if (response) {
-      navigate('/dashboard')
-    } else {
-      showToast('error', 'Something went wrong, please try again.')
+    // ---------------------------
+    // STEP 1: Save base profile data (does NOT include AI avatar yet)
+    // ---------------------------
+    try {
+      const res = await apiFetch("/api/profile/update", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ updatedProfile: payload }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        showToast("error", errorData.error || "Failed to save character.");
+        setIsSubmitting(false);
+        return;
+      }
+    } catch (err) {
+      console.error("Profile save error:", err);
+      showToast("error", "Unable to save character settings.");
+      setIsSubmitting(false);
+      return;
     }
 
+    // ---------------------------
+    // STEP 3: Redirect immediately
+    // ---------------------------
+    setIsSubmitting(false);
+    navigate("/");
+
+    // Optionally show toast (or move toast to /home after redirect)
     // showToast("success", `Character Created! Welcome, ${username} the ${selectedClassData?.name}.`);
   };
+
 
   return (
     <div
@@ -289,10 +318,11 @@ const CharacterCreation = () => {
                       ? "0 0 12px var(--accent-blue)"
                       : "none",
                 }}
-                onClick={() => setSelectedClass(cls.id)}
+                onClick={() => setClass(cls.id)}
               >
                 <img
-                  src={cls.defaultImage}
+                  src={placeholder}
+                  // src={cls.defaultImage}
                   alt={cls.name}
                   className="w-full h-48 object-cover rounded-lg mb-3"
                 />
@@ -349,14 +379,52 @@ const CharacterCreation = () => {
                 placeholder="AI Image Prompt (optional)"
               />
 
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="w-full text-sm mb-6 cursor-pointer"
-                style={{ color: "var(--text-primary)" }}
-              />
+              {/* Styled File Upload */}
+              <label className="block mb-2 font-medium" style={{ color: "var(--accent-blue)" }}>
+                Upload Custom Image
+              </label>
 
+              <div className="mb-6">
+                {/* Hidden native input */}
+                <input
+                  id="characterFileUpload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+
+                {/* Visible themed input-like box */}
+                <label
+                  htmlFor="characterFileUpload"
+                  className="w-fit p-3 rounded-md flex items-center justify-between cursor-pointer"
+                  style={{
+                    background: "var(--bg-secondary)",
+                    border: "1px solid var(--border)",
+                    color: "var(--text-primary)",
+                  }}
+                >
+                  {/* Left side: selected filename or placeholder */}
+                  <span className="truncate">
+                    {uploadedImage ? uploadedImage.name : "Choose image file…"}
+                  </span>
+
+                  {/* Right side: themed button-like indicator */}
+                  <span
+                    className="ml-4 px-3 py-1 rounded-md text-sm"
+                    style={{
+                      background: "var(--accent-blue)",
+                      color: "#ffffff",
+                      boxShadow: "0 0 8px var(--accent-blue)",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    Browse
+                  </span>
+                </label>
+              </div>
+
+              {/* Preview */}
               <div className="mt-4 flex flex-col items-center">
                 <img
                   src={previewImage || selectedClassData.defaultImage}
