@@ -7,6 +7,7 @@ import { showToast } from "@/utils/showToast"; // adjust import path
 import placeholder from '../assets/images/placeholder.png'
 import { apiFetch } from "@/utils/apiFetch";
 import { fileToBase64 } from "@/utils/fileToBase64";
+import imageCompression from "browser-image-compression";
 
 const CharacterCreation = () => {
 
@@ -103,13 +104,20 @@ const CharacterCreation = () => {
 
     setIsSubmitting(true);
 
+    const compressed = await imageCompression(uploadedImage, {
+      maxSizeMB: .2,
+      maxWidthOrHeight: 512,
+    })
+
+    // TODO: Sanitize payload before sending request to prevent file injection
     const payload = {
       username,
       theme,
+      onBoarded: true,
       timezone,
       selectedClass,
       customDescription,
-      uploadedImageName: await fileToBase64(uploadedImage) || null,
+      profileImage: await fileToBase64(compressed) || null,
     };
 
     console.log("Submitting character:", payload);
