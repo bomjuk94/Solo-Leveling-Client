@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { getTimeZones } from "@vvo/tzdb";
 import type { TimeZone } from "@/types";
@@ -6,6 +6,7 @@ import { formatTimeZoneLabel } from "@/utils/formatTimeZoneLabel";
 import { showToast } from "@/utils/showToast"; // adjust import path
 import placeholder from '../assets/images/placeholder.png'
 import { apiFetch } from "@/utils/apiFetch";
+import { fileToBase64 } from "@/utils/fileToBase64";
 
 const CharacterCreation = () => {
 
@@ -21,7 +22,6 @@ const CharacterCreation = () => {
   // Class
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
   const [customDescription, setCustomDescription] = useState("");
-  const [aiPrompt, setAiPrompt] = useState("");
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
@@ -109,7 +109,7 @@ const CharacterCreation = () => {
       timezone,
       selectedClass,
       customDescription,
-      uploadedImageName: uploadedImage?.name || null,
+      uploadedImageName: await fileToBase64(uploadedImage) || null,
     };
 
     console.log("Submitting character:", payload);
@@ -365,18 +365,6 @@ const CharacterCreation = () => {
                   color: "var(--text-primary)",
                 }}
                 placeholder="Describe your character's story..."
-              />
-
-              <input
-                value={aiPrompt}
-                onChange={(e) => setAiPrompt(e.target.value)}
-                className="w-full p-3 rounded-md mb-6 outline-none"
-                style={{
-                  background: "var(--bg-secondary)",
-                  border: "1px solid var(--border)",
-                  color: "var(--text-primary)",
-                }}
-                placeholder="AI Image Prompt (optional)"
               />
 
               {/* Styled File Upload */}
