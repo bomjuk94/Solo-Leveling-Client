@@ -2,6 +2,7 @@ import { type ReactNode } from "react";
 import { MdSpaceDashboard } from "react-icons/md";
 import { FaBullseye, FaHistory, FaStore } from "react-icons/fa";
 import { RiLoginCircleFill, RiUserAddFill } from "react-icons/ri";
+import { IoPerson } from "react-icons/io5";
 
 export type NavLinkItem = {
     path: string
@@ -29,6 +30,11 @@ export const navLinks: NavLinkItem[] = [
         path: "/store",
         name: "Store",
         icon: <FaStore className="w-5 h-5 text-[var(--accent-green)]" />,
+    },
+    {
+        path: "/profile",
+        name: "Profile",
+        icon: <IoPerson className="w-5 h-5 text-[var(--accent-red)]" />,
     },
     {
         path: "/login",
